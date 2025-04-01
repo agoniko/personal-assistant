@@ -34,7 +34,7 @@ class EmailClient:
         self.service = build('gmail', 'v1', credentials=self.authenticator.creds)
     
     def format_email(self, email_data: Dict[str, Any]) -> str:
-        """Format an email dictionary into a readable string."""
+        """Format an email dictionary into a readable string with type indicator."""
         sender = email_data.get('sender', 'Unknown sender')
         subject = email_data.get('subject', 'No subject')
         content = email_data.get('content', 'No content')
@@ -42,11 +42,11 @@ class EmailClient:
         email_id = email_data.get('id', 'No ID')
         
         return (
-            f"Email ID: {email_id}\n"
-            f"From: {sender}\n"
-            f"Date: {date}\n"
-            f"Subject: {subject}\n"
-            f"Content: {content}\n"
+            f"[EMAIL]\n"
+            f"📧 {sender}\n"
+            f"📅 {date}\n"
+            f"📌 {subject}\n"
+            f"{content}\n"
         )
     
     def extract_email_content(self, message: Dict[str, Any]) -> str:
@@ -165,7 +165,7 @@ class FetchLatestEmailsTool(BaseTool):
             if not email_details:
                 return "Could not process any emails."
             
-            return "Latest emails:\n\n" + "\n\n".join(email_details)
+            return "\n".join(email_details)
         except Exception as e:
             return f"Error fetching emails: {str(e)}"
 
@@ -245,7 +245,7 @@ class SearchEmailsTool(BaseTool):
             if not email_details:
                 return f"Could not process any emails matching '{query}'."
             
-            return f"Emails matching '{query}':\n\n" + "\n\n".join(email_details)
+            return "\n".join(email_details)
         except Exception as e:
             return f"Error searching emails: {str(e)}"
 
@@ -332,10 +332,9 @@ class FetchEmailsByDateTool(BaseTool):
             
             if not email_details:
                 date_range = f"from {start_date}" + (f" to {end_date}" if end_date else "")
-                return f"Could not process any emails {date_range}."
+                return f"No emails found {date_range}."
             
-            date_range = f"from {start_date}" + (f" to {end_date}" if end_date else "")
-            return f"Emails {date_range}:\n\n" + "\n\n".join(email_details)
+            return "\n".join(email_details)
         except Exception as e:
             return f"Error fetching emails by date: {str(e)}"
 

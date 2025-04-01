@@ -6,7 +6,7 @@ import json
 from datetime import datetime
 import os
 from pydantic import BaseModel, Field
-import config
+from src.config import MEMORY_KEY, MEMORY_RETURN_MESSAGES
 
 class Message(BaseModel):
     """Represents a single message in the conversation."""

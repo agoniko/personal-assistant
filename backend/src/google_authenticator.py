@@ -25,8 +25,17 @@ class GoogleAuthenticator:
             'https://www.googleapis.com/auth/gmail.modify'
         ]
         self.creds = None
-        self.token_path = 'keys/token.json'
-        self.credentials_path = 'keys/credentials.json'
+        
+        # Get the project root directory (two levels up from this file)
+        project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+        
+        # Set up paths relative to project root
+        self.token_path = os.path.join(project_root, 'backend', 'keys', 'token.json')
+        self.credentials_path = os.path.join(project_root, 'backend', 'keys', 'credentials.json')
+        
+        # Create keys directory if it doesn't exist
+        os.makedirs(os.path.dirname(self.credentials_path), exist_ok=True)
+        
         self.authenticate()
     
     def authenticate(self):

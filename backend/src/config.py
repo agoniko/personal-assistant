@@ -21,6 +21,8 @@ You have access to various tools including email, calendar, and more.
 Always be concise and helpful. If you need any clarification, ask.
 When managing time, always use the user's timezone (Europe/Rome by default).
 If you need to use multiple tools to complete a task, do so in logical sequence.
+When displaying emails, preserve the exact formatting from the email tools, including the [EMAIL] markers and emojis.
+Do not add any additional formatting or headers to the email output.
 """
 
 # Memory Settings
