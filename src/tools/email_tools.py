@@ -337,4 +337,69 @@ class FetchEmailsByDateTool(BaseTool):
             date_range = f"from {start_date}" + (f" to {end_date}" if end_date else "")
             return f"Emails {date_range}:\n\n" + "\n\n".join(email_details)
         except Exception as e:
-            return f"Error fetching emails by date: {str(e)}" 
+            return f"Error fetching emails by date: {str(e)}"
+
+@register_tool
+class SendEmailTool(BaseTool):
+    """Tool for sending emails via Gmail."""
+    
+    name = "send_email"
+    description = "Send an email using Gmail"
+    
+    def execute(
+        self,
+        to: str,
+        subject: str,
+        body: str,
+        cc: Optional[str] = None,
+        bcc: Optional[str] = None,
+    ) -> str:
+        """
+        Send an email using Gmail.
+        
+        Args:
+            to: Recipient email address.
+            subject: Email subject.
+            body: Email body content.
+            cc: Optional CC recipient email address.
+            bcc: Optional BCC recipient email address.
+            
+        Returns:
+            A confirmation message indicating whether the email was sent successfully.
+        """
+        try:
+            client = EmailClient()
+            
+            # Create the email message
+            message = {
+                'raw': self._create_message(to, subject, body, cc, bcc)
+            }
+            
+            # Send the email
+            sent_message = client.service.users().messages().send(
+                userId='me',
+                body=message
+            ).execute()
+            
+            return f"Email sent successfully! Message ID: {sent_message['id']}"
+        except Exception as e:
+            return f"Error sending email: {str(e)}"
+    
+    def _create_message(self, to: str, subject: str, body: str, cc: Optional[str] = None, bcc: Optional[str] = None) -> str:
+        """Create a properly formatted email message."""
+        # Create the email headers
+        headers = [
+            f"To: {to}",
+            f"Subject: {subject}"
+        ]
+        
+        if cc:
+            headers.append(f"Cc: {cc}")
+        if bcc:
+            headers.append(f"Bcc: {bcc}")
+        
+        # Combine headers and body
+        message = "\r\n".join(headers) + "\r\n\r\n" + body
+        
+        # Encode the message in base64url format
+        return base64.urlsafe_b64encode(message.encode('utf-8')).decode('utf-8') 
